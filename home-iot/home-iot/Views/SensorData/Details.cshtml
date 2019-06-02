@@ -1,0 +1,42 @@
+﻿@model HomeIot.Models.SensorData
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SensorData</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SensorId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SensorId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SensorDataType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SensorDataType)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Timestamp)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Timestamp)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Value)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Value)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
