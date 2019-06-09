@@ -22,7 +22,12 @@ namespace home_iot.Controllers
         // GET: SensorData
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SensorData.ToListAsync());
+            return View(await _context.SensorData.Take(100).ToListAsync());
+        }
+
+        public ActionResult DataChartComponent(SensorID sensor, long from, long to)
+        {
+            return ViewComponent("DataChart", new { sensor = sensor, from = new DateTime(from), to = new DateTime(to) });
         }
 
         // GET: SensorData/Details/5

@@ -1,0 +1,100 @@
+﻿@model SensorDetailViewModel
+<style>
+    .control-label {
+        display: inline-block;
+        text-align: right;
+        padding-right: 5px;
+        min-width: 150px;
+    }
+
+    .form-control {
+        width: 110px;
+        display: inline-block
+    }
+</style>
+
+<script>
+    function dateToTicks(date) {
+        var jsDate = moment(date, "DD.MM.YYYY hh:mm:ss").toDate();
+        return ((jsDate.getTime() * 10000) + 621355968000000000) - (jsDate.getTimezoneOffset() * 600000000);
+
+    }
+
+    function reloadChart() {
+        $.ajax({
+            url: 'sensordata/DataChartComponent?sensor=@Model.SensorID&from=' + dateToTicks($("#chartFrom").val()) + '&to=' + dateToTicks($("#chartTo").val()) })
+            .done(function (data)
+                {
+                    $('#c').html(data);
+                    drawChart();
+                });
+    }
+
+    domReadyQueue.push(function () {
+        $('#chartFrom').keypress(function (e) {
+            if (e.keyCode == 13)
+                $('#btnLoad').click();
+        });
+        $('#chartTo').keypress(function (e) {
+            if (e.keyCode == 13)
+                $('#btnLoad').click();
+        });
+    });
+</script>
+
+<h2>@Model.SensorID.GetName()</h2>
+
+<table style="width:100%;table-layout:auto;">
+    <colgroup>
+        <col style="width:80%" />
+        <col style="width:auto" />
+        <col style="width:auto" />
+    </colgroup>
+    <tbody>
+        <tr>
+            <td rowspan="4">
+                <div id="c">
+                    @await Component.InvokeAsync("DataChart", new { sensor = Model.SensorID, from = Model.ChartFrom, to = Model.ChartTo })
+                </div>
+            </td>
+            <td>
+                @Html.LabelFor(model => model.ActualValue, new { @class = "control-label" })
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.ActualValue.Value, "{0:#.#} " + Model.SensorID.GetUnits(), new { @class = "form-control", @readonly = "readonly", @style = "width:85px" })
+                <img src="@Model.Trend.GetImage()" title="@Model.Trend.GetText()" width="20" height="20" style="display:inline-block" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.LabelFor(model => model.TodayMin, new { @class = "control-label " })
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.TodayMin.Value, "{0:#.#} " + Model.SensorID.GetUnits(), new { @class = "form-control", @readonly = "readonly" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.LabelFor(model => model.TodayMax, new { @class = "control-label " })
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.TodayMax.Value, "{0:#.#} " + Model.SensorID.GetUnits(), new { @class = "form-control", @readonly = "readonly" })
+            </td>
+        </tr>
+        <tr>
+            <td height="150px">&nbsp;</td>
+            <td />
+        </tr>
+        <tr>
+            <td>
+                Interval dat:
+                @Html.TextBoxFor(model => model.ChartFrom, new { @Value = Model.ChartFrom.ToString("dd.MM.yyyy hh:mm"), @class = "form-control", @style = "width:150px", @id = "chartFrom" })
+                -
+                @Html.TextBoxFor(model => model.ChartTo, new { @Value = Model.ChartTo.ToString("dd.MM.yyyy hh:mm"), @class = "form-control", @style = "width:150px", @id = "chartTo" })
+
+                <button id="btnLoad" onclick="reloadChart()">Load</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+

@@ -1,6 +1,6 @@
 using System;
 
-namespace home_iot.Models
+namespace HomeIot.Models
 {
     public class ErrorViewModel
     {
