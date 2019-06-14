@@ -14,10 +14,34 @@ namespace HomeIot.Data
         }
 
         public DbSet<SensorData> SensorData { get; set; }
+        public DbSet<Sensor> Sensors { get; set; }
+        public DbSet<SensorGroup> SensorGroups { get; set; }
+        public DbSet<SensorInSensorGroup> SensorInSensorGroups { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SensorData>().ToTable("SensorData");
+            modelBuilder.Entity<SensorData>()
+                .ToTable("SensorData")
+                .HasOne(sd => sd.Sensor)
+                .WithMany(s => s.Data)
+                .HasForeignKey(sd => sd.SensorId);
+
+            modelBuilder.Entity<Sensor>()
+                .ToTable("Sensor");
+
+            modelBuilder.Entity<SensorGroup>()
+                .ToTable("SensorGroup");
+
+            modelBuilder.Entity<SensorInSensorGroup>()
+                .ToTable("SensorInSensorGroup")
+                .HasOne(sig => sig.Sensor)
+                .WithMany(s => s.Groups)
+                .HasForeignKey(sig => sig.SensorId);
+
+            modelBuilder.Entity<SensorInSensorGroup>()
+                .HasOne(sig => sig.SensorGroup)
+                .WithMany(sg => sg.Sensors)
+                .HasForeignKey(sig => sig.SensorGroupId);
         }
     }
 }

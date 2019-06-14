@@ -18,7 +18,7 @@ namespace HomeIot.Controllers
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(SensorID sensor)
+        public async Task<IViewComponentResult> InvokeAsync(int sensor)
         {
             var now = DateTime.Now;
             var model = new SensorDetailViewModel()

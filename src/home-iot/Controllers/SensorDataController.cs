@@ -25,7 +25,7 @@ namespace home_iot.Controllers
             return View(await _context.SensorData.Take(100).ToListAsync());
         }
 
-        public ActionResult DataChartComponent(SensorID sensor, long from, long to)
+        public ActionResult DataChartComponent(int sensor, long from, long to)
         {
             return ViewComponent("DataChart", new { sensor = sensor, from = new DateTime(from), to = new DateTime(to) });
         }

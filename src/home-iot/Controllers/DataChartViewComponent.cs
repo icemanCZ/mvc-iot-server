@@ -18,11 +18,11 @@ namespace HomeIot.Controllers
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(SensorID sensor, DateTime from, DateTime to)
+        public async Task<IViewComponentResult> InvokeAsync(int sensor, DateTime from, DateTime to)
         {
             var model = new ChartDataViewModel()
             {
-                SensorID = sensor,
+                SensorId = sensor,
                 Data = await _context.SensorData
                     .Where(x => x.SensorId == sensor && x.Timestamp >= from && x.Timestamp <= to)
                     .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))

@@ -9,13 +9,13 @@ namespace HomeIot.Models
 {
     public class SensorDataViewModel
     {
-        public SensorID SensorID { get; set; }
+        public int SensorId { get; set; }
         public DateTime Timestamp { get; set; }
         public float Value { get; set; }
 
-        public SensorDataViewModel(SensorID sensorId, DateTime timestamp, float value)
+        public SensorDataViewModel(int sensorId, DateTime timestamp, float value)
         {
-            SensorID = sensorId;
+            SensorId = sensorId;
             Timestamp = timestamp;
             Value = value;
         }

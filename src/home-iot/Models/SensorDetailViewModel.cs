@@ -9,7 +9,11 @@ namespace HomeIot.Models
 {
     public class SensorDetailViewModel
     {
-        public SensorID SensorID { get; set; }
+        public int SensorId { get; set; }
+        public string SensorName { get; set; }
+        public string SensorDescription { get; set; }
+        public Unit Unit { get; set; }
+
         [Display(Name = "Aktuální hodnota:")]
         public SensorDataViewModel ActualValue { get; set; }
         [Display(Name = "Dnešní minimum:")]

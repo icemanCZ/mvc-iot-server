@@ -8,7 +8,9 @@ namespace HomeIot.Models
 {
     public class ChartDataViewModel
     {
-        public SensorID SensorID { get; set; }
+        public int SensorId { get; set; }
+        public string SensorName { get; set; }
+        public Unit Unit { get; set; }
         public IEnumerable<SensorDataViewModel> Data { get; set; }
     }
 }

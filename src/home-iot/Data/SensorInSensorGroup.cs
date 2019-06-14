@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 
 namespace HomeIot.Data
 {
-    public class SensorData
+    public class SensorInSensorGroup
     {
-        public int ID { get; set; }
+        public int SensorInSensorGroupId { get; set; }
+
         public int SensorId { get; set; }
         public Sensor Sensor { get; set; }
 
-        public DateTime Timestamp { get; set; }
-        public float Value { get; set; }
+        public int SensorGroupId { get; set; }
+        public SensorGroup SensorGroup { get; set; }
     }
 }

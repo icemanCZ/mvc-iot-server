@@ -22,7 +22,7 @@
 
     function reloadChart() {
         $.ajax({
-            url: 'sensordata/DataChartComponent?sensor=@Model.SensorID&from=' + dateToTicks($("#chartFrom").val()) + '&to=' + dateToTicks($("#chartTo").val()) })
+            url: 'sensordata/DataChartComponent?sensor=@Model.SensorId&from=' + dateToTicks($("#chartFrom").val()) + '&to=' + dateToTicks($("#chartTo").val()) })
             .done(function (data)
                 {
                     $('#c').html(data);
@@ -42,7 +42,8 @@
     });
 </script>
 
-<h2>@Model.SensorID.GetName()</h2>
+<h2>@Model.SensorName</h2>
+<h3>@Model.SensorDescription</h3>
 
 <table style="width:100%;table-layout:auto;">
     <colgroup>
@@ -54,14 +55,14 @@
         <tr>
             <td rowspan="4">
                 <div id="c">
-                    @await Component.InvokeAsync("DataChart", new { sensor = Model.SensorID, from = Model.ChartFrom, to = Model.ChartTo })
+                    @await Component.InvokeAsync("DataChart", new { sensor = Model.SensorId, from = Model.ChartFrom, to = Model.ChartTo })
                 </div>
             </td>
             <td>
                 @Html.LabelFor(model => model.ActualValue, new { @class = "control-label" })
             </td>
             <td>
-                @Html.TextBoxFor(model => model.ActualValue.Value, "{0:#.#} " + Model.SensorID.GetUnits(), new { @class = "form-control", @readonly = "readonly", @style = "width:85px" })
+                @Html.TextBoxFor(model => model.ActualValue.Value, "{0:#.#} " + Model.Unit.GetText(), new { @class = "form-control", @readonly = "readonly", @style = "width:85px" })
                 <img src="@Model.Trend.GetImage()" title="@Model.Trend.GetText()" width="20" height="20" style="display:inline-block" />
             </td>
         </tr>
@@ -70,7 +71,7 @@
                 @Html.LabelFor(model => model.TodayMin, new { @class = "control-label " })
             </td>
             <td>
-                @Html.TextBoxFor(model => model.TodayMin.Value, "{0:#.#} " + Model.SensorID.GetUnits(), new { @class = "form-control", @readonly = "readonly" })
+                @Html.TextBoxFor(model => model.TodayMin.Value, "{0:#.#} " + Model.Unit.GetText(), new { @class = "form-control", @readonly = "readonly" })
             </td>
         </tr>
         <tr>
@@ -78,7 +79,7 @@
                 @Html.LabelFor(model => model.TodayMax, new { @class = "control-label " })
             </td>
             <td>
-                @Html.TextBoxFor(model => model.TodayMax.Value, "{0:#.#} " + Model.SensorID.GetUnits(), new { @class = "form-control", @readonly = "readonly" })
+                @Html.TextBoxFor(model => model.TodayMax.Value, "{0:#.#} " + Model.Unit.GetText(), new { @class = "form-control", @readonly = "readonly" })
             </td>
         </tr>
         <tr>

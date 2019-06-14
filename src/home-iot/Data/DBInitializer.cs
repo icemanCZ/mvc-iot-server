@@ -12,8 +12,26 @@ namespace HomeIot.Data
         {
             context.Database.EnsureCreated();
 
-            if (context.SensorData.Any())
+
+            if (context.Sensors.Any())
                 return;   // DB has been seeded
+
+            var sensor = new Sensor();
+            sensor.Name = "test";
+            sensor.Identificator = "test";
+            sensor.Description = "testovaci senzor";
+            sensor.Units = Unit.DegreeCelsius;
+            context.Sensors.Add(sensor);
+
+            var group = new SensorGroup();
+            group.Name = "test g";
+            group.Description = "testovaci skupina";
+            context.SensorGroups.Add(group);
+
+            var sig = new SensorInSensorGroup();
+            sig.Sensor = sensor;
+            sig.SensorGroup = group;
+            context.SensorInSensorGroups.Add(sig);
 
             var val = 23f;
             var time = DateTime.Now;
@@ -21,7 +39,7 @@ namespace HomeIot.Data
             for (int i = 0; i < 10000; i++)
             {
                 val += (float)((rnd.NextDouble()-0.5) * 5);
-                context.SensorData.Add(new SensorData() { SensorId = SensorID.SWTestTemperature, Timestamp = time.AddMinutes(i), Value = val });
+                context.SensorData.Add(new SensorData() { Sensor = sensor, Timestamp = time.AddMinutes(i), Value = val });
             }
             context.SaveChanges();
         }
