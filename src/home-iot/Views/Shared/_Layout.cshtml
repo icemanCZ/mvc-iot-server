@@ -42,6 +42,11 @@
 
     <partial name="_CookieConsentPartial" />
 
+    @*TODO prepsat tak, aby nemuselo byt pred body*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js">
+
+    </script>
+
     <div class="container body-content">
         @RenderBody()
         <hr />
@@ -50,9 +55,6 @@
         </footer>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js">
-
-    </script>
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>

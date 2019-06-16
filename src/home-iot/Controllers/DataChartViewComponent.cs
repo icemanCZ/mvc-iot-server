@@ -26,6 +26,7 @@ namespace HomeIot.Controllers
                 Data = await _context.SensorData
                     .Where(x => x.SensorId == sensor && x.Timestamp >= from && x.Timestamp <= to)
                     .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                    .OrderBy(x => x.Timestamp)
                     .ToListAsync()
             };
             return View("~/Views/SensorData/Components/DataChartPartialView.cshtml", model);

@@ -1,4 +1,5 @@
-﻿using HomeIot.Data;
+﻿using AutoMapper;
+using HomeIot.Data;
 using HomeIot.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,38 +13,42 @@ namespace HomeIot.Controllers
     public class SensorDetailViewComponent : ViewComponent
     {
         private readonly DBContext _context;
+        private readonly IMapper _mapper;
 
-        public SensorDetailViewComponent(DBContext context)
+        public SensorDetailViewComponent(DBContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(int sensor)
         {
+            var dbData = await _context.Sensors.FindAsync(sensor);
+            var model = _mapper.Map<SensorDetailViewModel>(dbData);
             var now = DateTime.Now;
-            var model = new SensorDetailViewModel()
-            {
-                ActualValue = await _context.SensorData
-                    .Where(x => x.SensorId == sensor)
-                    .OrderByDescending(x => x.Timestamp)
-                    .Take(1)
-                    .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
-                    .FirstOrDefaultAsync(),
-                TodayMin = await _context.SensorData
-                    .Where(x => x.SensorId == sensor && x.Timestamp >= now.Date && x.Timestamp < now.Date.AddDays(1))
-                    .OrderBy(x => x.Value)
-                    .Take(1)
-                    .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
-                    .FirstOrDefaultAsync(),
-                TodayMax = await _context.SensorData
-                    .Where(x => x.SensorId == sensor && x.Timestamp >= now.Date && x.Timestamp < now.Date.AddDays(1))
-                    .OrderByDescending(x => x.Value)
-                    .Take(1)
-                    .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
-                    .FirstOrDefaultAsync(),
-                ChartFrom = now.AddHours(-2),
-                ChartTo = now,
-            };
+            model.ActualValue = await _context.SensorData
+                .Where(x => x.SensorId == sensor)
+                .OrderByDescending(x => x.Timestamp)
+                .Take(1)
+                .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                .FirstOrDefaultAsync();
+            model.TodayMin = await _context.SensorData
+                .Where(x => x.SensorId == sensor && x.Timestamp >= now.Date && x.Timestamp < now.Date.AddDays(1))
+                .OrderBy(x => x.Value)
+                .Take(1)
+                .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                .FirstOrDefaultAsync();
+            model.TodayMax = await _context.SensorData
+                .Where(x => x.SensorId == sensor && x.Timestamp >= now.Date && x.Timestamp < now.Date.AddDays(1))
+                .OrderByDescending(x => x.Value)
+                .Take(1)
+                .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                .FirstOrDefaultAsync();
+            model.LastConnection = await _context.SensorData
+                .Where(x => x.SensorId == sensor)
+                .MaxAsync(x => x.Timestamp);
+            model.ChartFrom = now.AddHours(-12);
+            model.ChartTo = now;
 
             var avg = await _context.SensorData
                     .Where(x => x.SensorId == sensor)

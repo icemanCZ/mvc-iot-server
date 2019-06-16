@@ -80,9 +80,7 @@ namespace home_iot.Controllers
             {
                 try
                 {
-                    sensorData.Units = sensor.Units;
-                    sensorData.Name = sensor.Name;
-                    sensorData.Description = sensor.Description;
+                    _mapper.Map(sensor, sensorData);
                     _context.Update(sensor);
                     await _context.SaveChangesAsync();
                 }
@@ -105,6 +103,20 @@ namespace home_iot.Controllers
         private bool SensorExists(int id)
         {
             return _context.Sensors.Any(e => e.SensorId == id);
+        }
+
+        public async Task Favorite(int sensorId)
+        {
+            var sensorData = await _context.Sensors.FindAsync(sensorId);
+            sensorData.IsFavorited = true;
+            _context.SaveChanges();
+        }
+
+        public async Task UnFavorite(int sensorId)
+        {
+            var sensorData = await _context.Sensors.FindAsync(sensorId);
+            sensorData.IsFavorited = false;
+            _context.SaveChanges();
         }
     }
 }

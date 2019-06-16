@@ -5,15 +5,16 @@
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Data.Select(x => x.Value).ToList());
 }
 
-<div class="chart-container">
-    <canvas id="chart" style="width:100%; height:300px"></canvas>
-</div>
+<div id=@("dataChart" + Model.SensorId)>
+    <div class="chart-container">
+        <canvas id="@("chart" + @Model.SensorId)" style="width:100%; height:300px"></canvas>
+    </div>
 
-<script type="text/javascript">
-    domReadyQueue.push(drawChart);
+    <script type="text/javascript">
+    domReadyQueue.push(drawChart(@Model.SensorId));
 
-    function drawChart($) {
-            var chartName = "chart";
+    function drawChart(sensorId) {
+        var chartName = "chart" + sensorId;
             var ctx = document.getElementById(chartName).getContext('2d');
             var data = {
                 labels: @Html.Raw(XLabels),
@@ -61,8 +62,8 @@
                 scales: {
                     yAxes: [{
                         ticks: {
-                            min: 0,
-                            beginAtZero: true
+                            min: @(Math.Round(Model.Data.Min(x => x.Value) - 5)),
+                            max: @(Math.Round(Model.Data.Max(x => x.Value) + 5)),
                         },
                         gridLines: {
                             display: true,
@@ -88,4 +89,5 @@
 
             });
     }
-</script>  
+    </script>
+</div>
