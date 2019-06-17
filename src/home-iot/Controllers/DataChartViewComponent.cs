@@ -29,7 +29,7 @@ namespace HomeIot.Controllers
                     .OrderBy(x => x.Timestamp)
                     .ToListAsync()
             };
-            return View("~/Views/SensorData/Components/DataChartPartialView.cshtml", model);
+            return View("~/Views/Sensors/Components/DataChartComponent.cshtml", model);
         }
     }
 }

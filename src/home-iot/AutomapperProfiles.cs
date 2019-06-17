@@ -26,4 +26,13 @@ namespace HomeIot
 
         }
     }
+
+    public class SensorGroupProfile : Profile
+    {
+        public SensorGroupProfile()
+        {
+            CreateMap<SensorGroup, SensorGroupViewModel>();
+
+        }
+    }
 }

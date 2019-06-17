@@ -6,31 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HomeIot.Data;
-using HomeIot.Models;
 
 namespace home_iot.Controllers
 {
-    public class SensorDataController : Controller
+    public class SensorGroupsController : Controller
     {
         private readonly DBContext _context;
 
-        public SensorDataController(DBContext context)
+        public SensorGroupsController(DBContext context)
         {
             _context = context;
         }
 
-        // GET: SensorData
+        // GET: SensorGroups
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SensorData.Take(100).ToListAsync());
+            return View(await _context.SensorGroups.ToListAsync());
         }
 
-        public ActionResult DataChartComponent(int sensor, long from, long to)
-        {
-            return ViewComponent("DataChart", new { sensor = sensor, from = new DateTime(from), to = new DateTime(to) });
-        }
-
-        // GET: SensorData/Details/5
+        // GET: SensorGroups/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -38,39 +32,39 @@ namespace home_iot.Controllers
                 return NotFound();
             }
 
-            var sensorData = await _context.SensorData
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (sensorData == null)
+            var sensorGroup = await _context.SensorGroups
+                .FirstOrDefaultAsync(m => m.SensorGroupId == id);
+            if (sensorGroup == null)
             {
                 return NotFound();
             }
 
-            return View(sensorData);
+            return View(sensorGroup);
         }
 
-        // GET: SensorData/Create
+        // GET: SensorGroups/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: SensorData/Create
+        // POST: SensorGroups/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,SensorId,SensorDataType,Timestamp,Value")] SensorData sensorData)
+        public async Task<IActionResult> Create([Bind("SensorGroupId,Name,Description")] SensorGroup sensorGroup)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(sensorData);
+                _context.Add(sensorGroup);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(sensorData);
+            return View(sensorGroup);
         }
 
-        // GET: SensorData/Edit/5
+        // GET: SensorGroups/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,22 +72,22 @@ namespace home_iot.Controllers
                 return NotFound();
             }
 
-            var sensorData = await _context.SensorData.FindAsync(id);
-            if (sensorData == null)
+            var sensorGroup = await _context.SensorGroups.FindAsync(id);
+            if (sensorGroup == null)
             {
                 return NotFound();
             }
-            return View(sensorData);
+            return View(sensorGroup);
         }
 
-        // POST: SensorData/Edit/5
+        // POST: SensorGroups/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,SensorId,SensorDataType,Timestamp,Value")] SensorData sensorData)
+        public async Task<IActionResult> Edit(int id, [Bind("SensorGroupId,Name,Description")] SensorGroup sensorGroup)
         {
-            if (id != sensorData.ID)
+            if (id != sensorGroup.SensorGroupId)
             {
                 return NotFound();
             }
@@ -102,12 +96,12 @@ namespace home_iot.Controllers
             {
                 try
                 {
-                    _context.Update(sensorData);
+                    _context.Update(sensorGroup);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SensorDataExists(sensorData.ID))
+                    if (!SensorGroupExists(sensorGroup.SensorGroupId))
                     {
                         return NotFound();
                     }
@@ -118,10 +112,10 @@ namespace home_iot.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(sensorData);
+            return View(sensorGroup);
         }
 
-        // GET: SensorData/Delete/5
+        // GET: SensorGroups/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,30 +123,30 @@ namespace home_iot.Controllers
                 return NotFound();
             }
 
-            var sensorData = await _context.SensorData
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (sensorData == null)
+            var sensorGroup = await _context.SensorGroups
+                .FirstOrDefaultAsync(m => m.SensorGroupId == id);
+            if (sensorGroup == null)
             {
                 return NotFound();
             }
 
-            return View(sensorData);
+            return View(sensorGroup);
         }
 
-        // POST: SensorData/Delete/5
+        // POST: SensorGroups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sensorData = await _context.SensorData.FindAsync(id);
-            _context.SensorData.Remove(sensorData);
+            var sensorGroup = await _context.SensorGroups.FindAsync(id);
+            _context.SensorGroups.Remove(sensorGroup);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SensorDataExists(int id)
+        private bool SensorGroupExists(int id)
         {
-            return _context.SensorData.Any(e => e.ID == id);
+            return _context.SensorGroups.Any(e => e.SensorGroupId == id);
         }
     }
 }

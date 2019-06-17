@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HomeIot.Data;
 using HomeIot.Models;
+using HomeIot.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -41,6 +42,9 @@ namespace home_iot
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddTransient<MenuService, MenuService>();
+            services.AddTransient<EventService, EventService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

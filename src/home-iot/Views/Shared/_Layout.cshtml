@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject HomeIot.Services.MenuService menu
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -32,9 +33,26 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    @*<li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="About">Senzory</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>*@
+                    @foreach (var m in menu.GetMenu())
+                    {
+                        <li class="dropdown">
+                            <a asp-area="" asp-controller=@m.Controller asp-action=@m.Action asp-all-route-data=@m.Params  class="dropdown-toggle" data-toggle="dropdown">@m.Text</a>
+                            @if (m.Children.Any())
+                            {
+                                <ul class="dropdown-menu">
+
+                                    @foreach (var sm in m.Children)
+                                    {
+                                        <li><a asp-area="" asp-controller=@sm.Controller asp-action=@sm.Action asp-all-route-data=@sm.Params>@sm.Text</a></li>
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

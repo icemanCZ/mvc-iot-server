@@ -29,16 +29,28 @@ namespace home_iot.Controllers
             return View(data.Select(x => _mapper.Map<SensorViewModel>(x)).ToList());
         }
 
-        // GET: Sensors/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Charts()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var data = await _context.Sensors.Select(x => x.SensorId).ToListAsync();
+            return View("charts", data);
+        }
 
+        public async Task<IActionResult> Favorites()
+        {
+            var data = await _context.Sensors.Where(x => x.IsFavorited).Select(x => x.SensorId).ToListAsync();
+            return View("charts", data);
+        }
+
+        public async Task<IActionResult> Group(int groupId)
+        {
+            var data = await _context.Sensors.Where(x => x.Groups.Any(g => g.SensorGroupId == groupId)).Select(x => x.SensorId).ToListAsync();
+            return View("charts", data);
+        }
+
+        public async Task<IActionResult> Detail(int sensorId)
+        {
             var sensor = await _context.Sensors
-                .FirstOrDefaultAsync(m => m.SensorId == id);
+                .FirstOrDefaultAsync(m => m.SensorId == sensorId);
             if (sensor == null)
             {
                 return NotFound();
@@ -117,6 +129,11 @@ namespace home_iot.Controllers
             var sensorData = await _context.Sensors.FindAsync(sensorId);
             sensorData.IsFavorited = false;
             _context.SaveChanges();
+        }
+
+        public ActionResult DataChartComponent(int sensor, long from, long to)
+        {
+            return ViewComponent("DataChart", new { sensor = sensor, from = new DateTime(from), to = new DateTime(to) });
         }
     }
 }

@@ -30,9 +30,9 @@ namespace HomeIot.Models
         public string FavoriteIcon()
         {
             if (IsFavorited)
-                return "images/unfavorite.png";
+                return "/images/unfavorite.png";
             else
-                return "images/favorite.png";
+                return "/images/favorite.png";
         }
 
         public string FavoriteText()

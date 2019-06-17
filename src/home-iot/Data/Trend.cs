@@ -19,11 +19,11 @@ namespace HomeIot.Data
             switch (t)
             {
                 case Trend.Increasing:
-                    return "images/trend_increasing.png";
+                    return "/images/trend_increasing.png";
                 case Trend.Decreasing:
-                    return "images/trend_decreasing.png";
+                    return "/images/trend_decreasing.png";
                 case Trend.Consistent:
-                    return "images/trend_consistent.png";
+                    return "/images/trend_consistent.png";
                 default:
                     throw new NotImplementedException();
             }

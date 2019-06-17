@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace HomeIot.Controllers
 {
-    public class SensorDetailViewComponent : ViewComponent
+    public class SensorDataDetailViewComponent : ViewComponent
     {
         private readonly DBContext _context;
         private readonly IMapper _mapper;
 
-        public SensorDetailViewComponent(DBContext context, IMapper mapper)
+        public SensorDataDetailViewComponent(DBContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -62,7 +62,7 @@ namespace HomeIot.Controllers
             else
                 model.Trend = Trend.Consistent;
 
-            return View("~/Views/SensorData/Components/SensorDetailPartialView.cshtml", model);
+            return View("~/Views/Sensors/Components/SensorDataDetailComponent.cshtml", model);
         }
     }
 }

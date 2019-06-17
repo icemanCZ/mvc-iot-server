@@ -23,28 +23,7 @@ namespace home_iot.Controllers
 
         public IActionResult Index()
         {
-            var model = new HomeViewModel();
-            model.Favorites = new HashSet<int>(_context.Sensors.Where(x => x.IsFavorited).Select(x => x.SensorId).ToList());
-            return View(model);
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return RedirectToActionPermanent("Favorites", "Sensors");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

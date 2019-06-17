@@ -4,8 +4,6 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
-
 <div>
     <h4>Sensor</h4>
     <hr />
@@ -35,7 +33,15 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
     </dl>
+
+
+
 </div>
+
+<div>
+    @await Component.InvokeAsync("SensorDataDetail", new {sensor = Model.SensorId })
+</div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.SensorId">Edit</a> |
     <a asp-action="Index">Back to List</a>
