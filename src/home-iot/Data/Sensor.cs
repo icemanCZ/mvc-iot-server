@@ -16,6 +16,7 @@ namespace HomeIot.Data
 
         public ICollection<SensorData> Data { get; set; }
         public ICollection<SensorInSensorGroup> Groups { get; set; }
+        public ICollection<ApplicationEvent> Events { get; set; }
 
     }
 }

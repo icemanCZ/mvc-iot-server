@@ -8,6 +8,7 @@ namespace HomeIot.Data
     public enum Unit : byte
     {
         DegreeCelsius = 0,
+        Unknown = byte.MaxValue,
     }
 
     public static class UnitExtensions
@@ -18,6 +19,8 @@ namespace HomeIot.Data
             {
                 case Unit.DegreeCelsius:
                     return "°C";
+                case Unit.Unknown:
+                    return "";
                 default:
                     throw new NotImplementedException();
             }

@@ -14,4 +14,8 @@
     <PackageReference Include="Moment.js" Version="2.24.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+  </ItemGroup>
+
 </Project>

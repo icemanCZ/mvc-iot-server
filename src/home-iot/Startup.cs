@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using HomeIot.ActionFilters;
 using HomeIot.Data;
 using HomeIot.Models;
 using HomeIot.Services;
@@ -45,6 +46,8 @@ namespace home_iot
 
             services.AddTransient<MenuService, MenuService>();
             services.AddTransient<EventService, EventService>();
+
+            services.AddScoped<APIIPFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

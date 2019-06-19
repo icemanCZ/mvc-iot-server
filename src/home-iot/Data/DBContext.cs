@@ -17,6 +17,7 @@ namespace HomeIot.Data
         public DbSet<Sensor> Sensors { get; set; }
         public DbSet<SensorGroup> SensorGroups { get; set; }
         public DbSet<SensorInSensorGroup> SensorInSensorGroups { get; set; }
+        public DbSet<ApplicationEvent> ApplicationEvents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +43,12 @@ namespace HomeIot.Data
                 .HasOne(sig => sig.SensorGroup)
                 .WithMany(sg => sg.Sensors)
                 .HasForeignKey(sig => sig.SensorGroupId);
+
+            modelBuilder.Entity<ApplicationEvent>()
+                .ToTable("ApplicationEvent")
+                .HasOne(sd => sd.Sensor)
+                .WithMany(s => s.Events)
+                .HasForeignKey(sd => sd.SensorId);
         }
     }
 }

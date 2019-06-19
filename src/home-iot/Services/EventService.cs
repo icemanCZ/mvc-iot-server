@@ -17,7 +17,12 @@ namespace HomeIot.Services
 
         public void NewSensorRegistered(int sensorId)
         {
-
+            var e = new ApplicationEvent();
+            e.EventType = ApplicationEventType.NewSensorRegistered;
+            e.Timestamp = DateTime.Now;
+            e.SensorId = sensorId;
+            _context.ApplicationEvents.Add(e);
+            _context.SaveChanges();
         }
 
         public void SensorConnectionLost(int sensorId)
