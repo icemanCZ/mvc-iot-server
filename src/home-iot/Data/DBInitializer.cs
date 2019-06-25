@@ -40,7 +40,7 @@ namespace HomeIot.Data
                 var val = 23f;
                 var time = DateTime.Now;
                 var rnd = new Random();
-                for (int j = 0; j < 10000; j++)
+                for (int j = 0; j < 100000; j++)
                 {
                     val += (float)((rnd.NextDouble() - 0.5) * 5);
                     context.SensorData.Add(new SensorData() { Sensor = sensor, Timestamp = time.AddMinutes(j), Value = val });

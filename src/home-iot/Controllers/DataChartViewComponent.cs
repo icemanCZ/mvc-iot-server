@@ -11,6 +11,8 @@ namespace HomeIot.Controllers
 {
     public class DataChartViewComponent : ViewComponent
     {
+        private const int MAX_SAMPLES_COUNT = 200;
+
         private readonly DBContext _context;
 
         public DataChartViewComponent(DBContext context)
@@ -25,10 +27,16 @@ namespace HomeIot.Controllers
                 SensorId = sensor,
                 Data = await _context.SensorData
                     .Where(x => x.SensorId == sensor && x.Timestamp >= from && x.Timestamp <= to)
-                    .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
                     .OrderBy(x => x.Timestamp)
+                    .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
                     .ToListAsync()
+                    
             };
+
+            // TODO: tohle nejak udelat uz pri nacitani z DB. Nebo jeste lepe udelat nejakou intepolaci
+            var indexModulo = Math.Ceiling(model.Data.Count() / (float)MAX_SAMPLES_COUNT);
+            model.Data = model.Data.Where((x, index) => index % indexModulo == 0);
+
             return View("~/Views/Sensors/Components/DataChartComponent.cshtml", model);
         }
     }

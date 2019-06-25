@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HomeIot.Data;
 using AutoMapper;
 using HomeIot.Models;
+using Microsoft.Extensions.Logging;
 
 namespace home_iot.Controllers
 {
@@ -15,11 +16,13 @@ namespace home_iot.Controllers
     {
         private readonly DBContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<SensorsController> _logger;
 
-        public SensorsController(DBContext context, IMapper mapper)
+        public SensorsController(DBContext context, IMapper mapper, ILoggerFactory loggerFactory)
         {
             _context = context;
             _mapper = mapper;
+            _logger = loggerFactory.CreateLogger<SensorsController>();
         }
 
         // GET: Sensors

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HomeIot.Data;
 using HomeIot.Models;
+using log4net.Core;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace home_iot.Controllers
 {
@@ -14,11 +16,13 @@ namespace home_iot.Controllers
     {
         private readonly DBContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(DBContext context, IMapper mapper)
+        public HomeController(DBContext context, IMapper mapper, ILoggerFactory loggerFactory)
         {
             _context = context;
             _mapper = mapper;
+            _logger = loggerFactory.CreateLogger<HomeController>();
         }
 
         public IActionResult Index()

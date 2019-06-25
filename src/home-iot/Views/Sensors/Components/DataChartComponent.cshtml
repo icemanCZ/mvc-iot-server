@@ -62,8 +62,8 @@
                 scales: {
                     yAxes: [{
                         ticks: {
-                            min: @(Math.Round(Model.Data.Min(x => x.Value) - 5)),
-                            max: @(Math.Round(Model.Data.Max(x => x.Value) + 5)),
+                            min: @(Math.Round(Model.Data.Any() ? (Model.Data.Min(x => x.Value) - 5) : 0)),
+                            max: @(Math.Round(Model.Data.Any() ? (Model.Data.Max(x => x.Value) + 5) : 100)),
                         },
                         gridLines: {
                             display: true,

@@ -11,7 +11,7 @@ function dateToTicks(date) {
 
 function reloadChart(sensorId) {
     $.ajax({
-        url: 'sensordata/DataChartComponent?sensor=' + sensorId + '&from=' + dateToTicks($("#chartFrom" + sensorId).val()) + '&to=' + dateToTicks($("#chartTo" + sensorId).val())
+        url: 'DataChartComponent?sensor=' + sensorId + '&from=' + dateToTicks($("#chartFrom" + sensorId).val()) + '&to=' + dateToTicks($("#chartTo" + sensorId).val())
     })
         .done(function (data) {
             $('#dataChart' + sensorId).html(data);

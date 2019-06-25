@@ -47,7 +47,7 @@ namespace HomeIot.Controllers
             model.LastConnection = await _context.SensorData
                 .Where(x => x.SensorId == sensor)
                 .MaxAsync(x => x.Timestamp);
-            model.ChartFrom = now.AddHours(-12);
+            model.ChartFrom = now.AddHours(-6);
             model.ChartTo = now;
 
             var avg = await _context.SensorData
