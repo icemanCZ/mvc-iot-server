@@ -14,7 +14,7 @@ namespace HomeIot.Data
 
     public static class TrendExtensions
     {
-        public static string GetImage(this Trend t)
+        public static string GetIconPath(this Trend t)
         {
             switch (t)
             {
@@ -42,6 +42,16 @@ namespace HomeIot.Data
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        public static Trend GetTrend(float current, float avg)
+        {
+            if (current > avg)
+                return Trend.Increasing;
+            else if (current < avg)
+                return Trend.Decreasing;
+            else
+                return Trend.Consistent;
         }
     }
 }

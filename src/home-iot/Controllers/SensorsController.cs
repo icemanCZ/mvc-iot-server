@@ -82,7 +82,7 @@ namespace home_iot.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Units,Name,Description")] SensorViewModel sensor)
+        public async Task<IActionResult> Edit(int id, [Bind("SensorId,Identificator,Units,Name,Description")] SensorViewModel sensor)
         {
             var sensorData = await _context.Sensors.FindAsync(id);
             if (sensorData == null)
@@ -95,7 +95,7 @@ namespace home_iot.Controllers
                 try
                 {
                     _mapper.Map(sensor, sensorData);
-                    _context.Update(sensor);
+                    _context.Update(sensorData);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -237,14 +237,44 @@ namespace home_iot.Controllers
                     .OrderByDescending(x => x.Timestamp)
                     .Take(3)
                     .AverageAsync(x => x.Value);
-            if (model.ActualValue?.Value > avg)
-                model.Trend = Trend.Increasing;
-            else if (model.ActualValue?.Value < avg)
-                model.Trend = Trend.Decreasing;
-            else
-                model.Trend = Trend.Consistent;
+            model.Trend = TrendExtensions.GetTrend(avg, model.ActualValue?.Value ?? 0);
 
             return View("~/Views/Sensors/Components/SensorDataDetailComponent.cshtml", model);
+        }
+    }
+
+    public class SensorsOverviewViewComponent : ViewComponent
+    {
+        private readonly DBContext _context;
+        private readonly IMapper _mapper;
+
+        public SensorsOverviewViewComponent(DBContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var dbData = await _context
+                .Sensors
+                .Select(s =>
+                    new
+                    {
+                        Sensor = s,
+                        ActualValue = s.Data.OrderByDescending(x => x.Timestamp).FirstOrDefault(),
+                        Last3 = s.Data.OrderByDescending(x => x.Timestamp).Take(3),
+                    })
+                .ToListAsync();
+
+            var models = dbData.Select(d => _mapper.Map<SensorDetailViewModel>(d.Sensor)).ToList();
+            for (int i = 0; i < dbData.Count(); i++)
+            {
+                models[i].ActualValue = _mapper.Map<SensorDataViewModel>(dbData[i].ActualValue);
+                models[i].Trend = TrendExtensions.GetTrend(models[i].ActualValue.Value, dbData[i].Last3.Average(x => x.Value));
+            }
+
+            return View("~/Views/Sensors/Components/SensorsOverviewComponent.cshtml", models);
         }
     }
 

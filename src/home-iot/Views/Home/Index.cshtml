@@ -4,7 +4,15 @@
     ViewData["Title"] = "Home Page";
 }
 
-@await Component.InvokeAsync("UnresolvedApplicationEvents")
+
+<div style="width:48%;float:left">
+    @await Component.InvokeAsync("UnresolvedApplicationEvents")
+</div>
+<div style="width:48%;float:right;max-height:400px">
+    @await Component.InvokeAsync("SensorsOverview")
+</div>
+
+<hr style="clear:both">
 
 @await Component.InvokeAsync("FavoritedSensors")
 

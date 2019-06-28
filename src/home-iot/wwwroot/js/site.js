@@ -22,11 +22,11 @@ function reloadChart(sensorId) {
 function favoriteSensor(sensorId, favorite, doRemove) {
     if (favorite) {
         $.ajax({
-            url: 'sensors/favorite?sensorId=' + sensorId
+            url: 'favorite?sensorId=' + sensorId
         })
     } else {
         $.ajax({
-            url: 'sensors/unfavorite?sensorId=' + sensorId
+            url: 'unfavorite?sensorId=' + sensorId
         })
             .done(function (data) {
                 if (!favorite) {

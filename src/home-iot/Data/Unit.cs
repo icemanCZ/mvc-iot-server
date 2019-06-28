@@ -25,5 +25,19 @@ namespace HomeIot.Data
                     throw new NotImplementedException();
             }
         }
+
+        public static string GetIconPath(this Unit t)
+        {
+            switch (t)
+            {
+                case Unit.DegreeCelsius:
+                    return "/images/sensor_temperature.png";
+                case Unit.Unknown:
+                    return "/images/sensor_unknown.png";
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
     }
 }

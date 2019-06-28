@@ -26,6 +26,17 @@ namespace HomeIot
         }
     }
 
+    public class SensorDataProfile : Profile
+    {
+        public SensorDataProfile()
+        {
+            CreateMap<SensorData, SensorDataViewModel>()
+                .ForMember(sdvm => sdvm.SensorId, opt => opt.MapFrom(sd => sd.SensorId))
+                .ForMember(sdvm => sdvm.Value, opt => opt.MapFrom(sd => sd.Value))
+                .ForMember(sdvm => sdvm.Timestamp, opt => opt.MapFrom(sd => sd.Timestamp));
+        }
+    }
+
     public class SensorGroupProfile : Profile
     {
         public SensorGroupProfile()

@@ -28,11 +28,11 @@
     });
     </script>
 
-    <h2>
+    <h4>
         @Model.SensorName
         <img src="@Model.FavoriteIcon()" title="@Model.FavoriteText()" width="20" height="20" style="display:inline-block; margin-bottom:5px" onclick="favoriteSensor(@Model.SensorId, @((!Model.IsFavorited).ToString().ToLower()), true);" />
-    </h2>
-    <h3>@Model.SensorDescription</h3>
+    </h4>
+    <h5>@Model.SensorDescription</h5>
 
     <table style="width:100%;table-layout:auto;">
         <colgroup>
@@ -52,7 +52,7 @@
                 </td>
                 <td>
                     @Html.TextBoxFor(model => model.ActualValue.Value, "{0:0.#} " + Model.Units.GetText(), new { @class = "form-control", @readonly = "readonly", @style = "width:85px" })
-                    <img src="@Model.Trend.GetImage()" title="@Model.Trend.GetText()" width="20" height="20" style="display:inline-block" />
+                    <img src="@Model.Trend.GetIconPath()" title="@Model.Trend.GetText()" width="20" height="20" style="display:inline-block" />
                 </td>
             </tr>
             <tr>
