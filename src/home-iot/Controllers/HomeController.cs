@@ -27,7 +27,7 @@ namespace home_iot.Controllers
 
         public IActionResult Index()
         {
-            return RedirectToActionPermanent("Favorites", "Sensors");
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

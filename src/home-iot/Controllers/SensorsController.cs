@@ -38,10 +38,9 @@ namespace home_iot.Controllers
             return View("charts", data);
         }
 
-        public async Task<IActionResult> Favorites()
+        public ActionResult Favorites()
         {
-            var data = await _context.Sensors.Where(x => x.IsFavorited).Select(x => x.SensorId).ToListAsync();
-            return View("charts", data);
+            return ViewComponent("DataChart");
         }
 
         public async Task<IActionResult> Group(int groupId)
@@ -139,4 +138,115 @@ namespace home_iot.Controllers
             return ViewComponent("DataChart", new { sensor = sensor, from = new DateTime(from), to = new DateTime(to) });
         }
     }
+
+
+    #region Components
+    public class FavoritedSensorsViewComponent : ViewComponent
+    {
+        private const int MAX_SAMPLES_COUNT = 200;
+
+        private readonly DBContext _context;
+
+        public FavoritedSensorsViewComponent(DBContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync(int sensor, DateTime from, DateTime to)
+        {
+            var data = await _context.Sensors.Where(x => x.IsFavorited).Select(x => x.SensorId).ToListAsync();
+            return View("~/Views/Sensors/Components/FavoritedSensorsComponent.cshtml", data);
+        }
+    }
+
+    public class DataChartViewComponent : ViewComponent
+    {
+        private const int MAX_SAMPLES_COUNT = 200;
+
+        private readonly DBContext _context;
+
+        public DataChartViewComponent(DBContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync(int sensor, DateTime from, DateTime to)
+        {
+            var model = new ChartDataViewModel()
+            {
+                SensorId = sensor,
+                Data = await _context.SensorData
+                    .Where(x => x.SensorId == sensor && x.Timestamp >= from && x.Timestamp <= to)
+                    .OrderBy(x => x.Timestamp)
+                    .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                    .ToListAsync()
+
+            };
+
+            // TODO: tohle nejak udelat uz pri nacitani z DB. Nebo jeste lepe udelat nejakou intepolaci
+            var indexModulo = Math.Ceiling(model.Data.Count() / (float)MAX_SAMPLES_COUNT);
+            model.Data = model.Data.Where((x, index) => index % indexModulo == 0);
+
+            return View("~/Views/Sensors/Components/DataChartComponent.cshtml", model);
+        }
+    }
+
+
+    public class SensorDataDetailViewComponent : ViewComponent
+    {
+        private readonly DBContext _context;
+        private readonly IMapper _mapper;
+
+        public SensorDataDetailViewComponent(DBContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync(int sensor)
+        {
+            var dbData = await _context.Sensors.FindAsync(sensor);
+            var model = _mapper.Map<SensorDetailViewModel>(dbData);
+            var now = DateTime.Now;
+            model.ActualValue = await _context.SensorData
+                .Where(x => x.SensorId == sensor)
+                .OrderByDescending(x => x.Timestamp)
+                .Take(1)
+                .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                .FirstOrDefaultAsync();
+            model.TodayMin = await _context.SensorData
+                .Where(x => x.SensorId == sensor && x.Timestamp >= now.Date && x.Timestamp < now.Date.AddDays(1))
+                .OrderBy(x => x.Value)
+                .Take(1)
+                .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                .FirstOrDefaultAsync();
+            model.TodayMax = await _context.SensorData
+                .Where(x => x.SensorId == sensor && x.Timestamp >= now.Date && x.Timestamp < now.Date.AddDays(1))
+                .OrderByDescending(x => x.Value)
+                .Take(1)
+                .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
+                .FirstOrDefaultAsync();
+            model.LastConnection = await _context.SensorData
+                .Where(x => x.SensorId == sensor)
+                .MaxAsync(x => x.Timestamp);
+            model.ChartFrom = now.AddHours(-6);
+            model.ChartTo = now;
+
+            var avg = await _context.SensorData
+                    .Where(x => x.SensorId == sensor)
+                    .OrderByDescending(x => x.Timestamp)
+                    .Take(3)
+                    .AverageAsync(x => x.Value);
+            if (model.ActualValue?.Value > avg)
+                model.Trend = Trend.Increasing;
+            else if (model.ActualValue?.Value < avg)
+                model.Trend = Trend.Decreasing;
+            else
+                model.Trend = Trend.Consistent;
+
+            return View("~/Views/Sensors/Components/SensorDataDetailComponent.cshtml", model);
+        }
+    }
+
+    #endregion
 }

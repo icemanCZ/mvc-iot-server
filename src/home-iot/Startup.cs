@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using HomeIot;
 using HomeIot.ActionFilters;
 using HomeIot.Data;
 using HomeIot.Models;
@@ -38,6 +39,11 @@ namespace home_iot
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.Configure<AppSettings>(options => 
+                Configuration.GetSection("AppSettings").Bind(options)
+            );
+
+
             services.AddDbContext<DBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
@@ -46,7 +52,9 @@ namespace home_iot
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddTransient<MenuService, MenuService>();
-            services.AddTransient<EventService, EventService>();
+            services.AddTransient<IEventService, EventService>();
+
+            services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, SensorConnectionCheckerService>();
 
             services.AddScoped<APIIPFilter>();
         }

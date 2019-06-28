@@ -14,9 +14,9 @@ namespace home_iot.Controllers
     {
         private readonly DBContext _context;
         private readonly IMapper _mapper;
-        private readonly EventService _eventService;
+        private readonly IEventService _eventService;
 
-        public ApiController(DBContext context, IMapper mapper, EventService eventService)
+        public ApiController(DBContext context, IMapper mapper, IEventService eventService)
         {
             _context = context;
             _mapper = mapper;
@@ -48,6 +48,8 @@ namespace home_iot.Controllers
             data.Value = value;
             _context.SensorData.Add(data);
             _context.SaveChanges();
+
+            _eventService.NotifySensorConnected(sensorId.Value);
 
             return Ok();
         }

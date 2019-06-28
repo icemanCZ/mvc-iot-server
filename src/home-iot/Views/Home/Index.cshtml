@@ -4,11 +4,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-@foreach (var id in Model.Favorites)
-{
-    <div class="row">
-        <div class="col-md-12">
-            @await Component.InvokeAsync("SensorDetail", new { sensor = id })
-        </div>
-    </div>
-}
+@await Component.InvokeAsync("UnresolvedApplicationEvents")
+
+@await Component.InvokeAsync("FavoritedSensors")
+

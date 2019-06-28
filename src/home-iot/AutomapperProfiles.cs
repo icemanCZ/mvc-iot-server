@@ -18,12 +18,11 @@ namespace HomeIot
                 .ForMember(s => s.Description, opt => opt.MapFrom(svm => svm.Description))
                 .ForMember(s => s.Units, opt => opt.MapFrom(svm => svm.Units));
             CreateMap<Sensor, SensorDetailViewModel>()
-                .ForMember(s => s.SensorId, opt => opt.MapFrom(svm => svm.SensorId))
-                .ForMember(s => s.SensorName, opt => opt.MapFrom(svm => svm.Name))
-                .ForMember(s => s.SensorDescription, opt => opt.MapFrom(svm => svm.Description))
-                .ForMember(s => s.IsFavorited, opt => opt.MapFrom(svm => svm.IsFavorited))
-                .ForMember(s => s.Units, opt => opt.MapFrom(svm => svm.Units));
-
+                .ForMember(svm => svm.SensorId, opt => opt.MapFrom(s => s.SensorId))
+                .ForMember(svm => svm.SensorName, opt => opt.MapFrom(s => s.Name))
+                .ForMember(svm => svm.SensorDescription, opt => opt.MapFrom(s => s.Description))
+                .ForMember(svm => svm.IsFavorited, opt => opt.MapFrom(s => s.IsFavorited))
+                .ForMember(svm => svm.Units, opt => opt.MapFrom(s => s.Units));
         }
     }
 
@@ -32,7 +31,22 @@ namespace HomeIot
         public SensorGroupProfile()
         {
             CreateMap<SensorGroup, SensorGroupViewModel>();
+        }
+    }
 
+    public class ApplicationEventProfile : Profile
+    {
+        public ApplicationEventProfile()
+        {
+            CreateMap<ApplicationEvent, ApplicationEventViewModel>()
+                .ForMember(evm => evm.ApplicationEventId, opt => opt.MapFrom(e => e.SensorId))
+                .ForMember(evm => evm.EventType, opt => opt.MapFrom(e => e.EventType))
+                .ForMember(evm => evm.Resolved, opt => opt.MapFrom(e => e.Resolved))
+                .ForMember(evm => evm.ResolvedTimestamp, opt => opt.MapFrom(e => e.ResolvedTimestamp))
+                .ForMember(evm => evm.Timestamp, opt => opt.MapFrom(e => e.Timestamp))
+                .ForMember(evm => evm.SensorId, opt => opt.MapFrom(e => e.SensorId))
+                .ForMember(evm => evm.SensorName, opt => opt.MapFrom(e => e.Sensor.Name))
+                .ForMember(evm => evm.SensorUnits, opt => opt.MapFrom(e => e.Sensor.Units));
         }
     }
 }

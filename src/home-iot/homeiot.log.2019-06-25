@@ -1,0 +1,2 @@
+WARN 9 Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware - Failed to determine the https port for redirect.
+WARN 10 Microsoft.EntityFrameworkCore.Query - The LINQ expression 'orderby new SensorDataViewModel(__sensor_0, [x].Timestamp, [x].Value).Timestamp asc' could not be translated and will be evaluated locally.
