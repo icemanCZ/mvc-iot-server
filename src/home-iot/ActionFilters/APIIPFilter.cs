@@ -20,27 +20,27 @@ namespace HomeIot.ActionFilters
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var remoteIp = context.HttpContext.Connection.RemoteIpAddress;
+            //var remoteIp = context.HttpContext.Connection.RemoteIpAddress;
 
-            string[] ip = _safelist.Split(';');
+            //string[] ip = _safelist.Split(';');
 
-            var bytes = remoteIp.GetAddressBytes();
-            var badIp = true;
-            foreach (var address in ip)
-            {
-                var testIp = IPAddress.Parse(address);
-                if (testIp.GetAddressBytes().SequenceEqual(bytes))
-                {
-                    badIp = false;
-                    break;
-                }
-            }
+            //var bytes = remoteIp.GetAddressBytes();
+            //var badIp = true;
+            //foreach (var address in ip)
+            //{
+            //    var testIp = IPAddress.Parse(address);
+            //    if (testIp.GetAddressBytes().SequenceEqual(bytes))
+            //    {
+            //        badIp = false;
+            //        break;
+            //    }
+            //}
 
-            if (badIp)
-            {
-                context.Result = new StatusCodeResult(401);
-                return;
-            }
+            //if (badIp)
+            //{
+            //    context.Result = new StatusCodeResult(401);
+            //    return;
+            //}
 
             base.OnActionExecuting(context);
         }

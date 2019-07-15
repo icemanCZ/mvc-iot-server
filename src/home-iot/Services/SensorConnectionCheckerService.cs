@@ -31,7 +31,7 @@ namespace HomeIot.Services
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     DBContext context = scope.ServiceProvider.GetRequiredService<DBContext>();
-                    var dataThreshold = DateTime.Now.AddMinutes(-10);
+                    var dataThreshold = DateTime.Now.AddMilliseconds(-ApplicationEvent.SENSOR_CONNECTION_LOST_INTERVAL);
                     var disconnected = await context
                         .Sensors
                         .Where(s =>

@@ -69,7 +69,7 @@ namespace home_iot.Controllers
                 return NotFound();
             }
 
-            var sensor = await _context.Sensors.FindAsync(id);
+            var sensor = await _context.Sensors.Include(x => x.Groups).FirstAsync(x => x.SensorId == id);
             if (sensor == null)
             {
                 return NotFound();
@@ -82,9 +82,9 @@ namespace home_iot.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SensorId,Identificator,Units,Name,Description")] SensorViewModel sensor)
+        public async Task<IActionResult> Edit(int id, [Bind("SensorId,Identificator,Units,Name,Description,Groups")] SensorViewModel sensor)
         {
-            var sensorData = await _context.Sensors.FindAsync(id);
+            var sensorData = await _context.Sensors.Include(x => x.Groups).FirstAsync(x => x.SensorId == id);
             if (sensorData == null)
             {
                 return NotFound();
@@ -119,17 +119,10 @@ namespace home_iot.Controllers
             return _context.Sensors.Any(e => e.SensorId == id);
         }
 
-        public async Task Favorite(int sensorId)
+        public async Task Favorite(int sensorId, bool favorite)
         {
             var sensorData = await _context.Sensors.FindAsync(sensorId);
-            sensorData.IsFavorited = true;
-            _context.SaveChanges();
-        }
-
-        public async Task UnFavorite(int sensorId)
-        {
-            var sensorData = await _context.Sensors.FindAsync(sensorId);
-            sensorData.IsFavorited = false;
+            sensorData.IsFavorited = favorite;
             _context.SaveChanges();
         }
 

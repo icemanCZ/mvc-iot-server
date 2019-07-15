@@ -16,6 +16,8 @@ namespace home_iot
     {
         public static void Main(string[] args)
         {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+
             var host = CreateWebHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())

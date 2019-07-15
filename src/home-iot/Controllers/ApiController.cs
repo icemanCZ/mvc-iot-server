@@ -23,7 +23,7 @@ namespace home_iot.Controllers
             _eventService = eventService;
         }
 
-        [ServiceFilter(typeof(APIIPFilter))]
+        //[ServiceFilter(typeof(APIIPFilter))]
         public IActionResult Write(string sensorIdentificator, float value)
         {
             if (string.IsNullOrWhiteSpace(sensorIdentificator))

@@ -259,3 +259,6 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/src/home-iot/homeiot.log.2019-07-14
+/src/home-iot/homeiot.log.2019-07-03
+/src/home-iot/homeiot.log.2019-06-28

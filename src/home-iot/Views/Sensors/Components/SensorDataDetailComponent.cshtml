@@ -30,7 +30,7 @@
 
     <h4>
         @Model.SensorName
-        <img src="@Model.FavoriteIcon()" title="@Model.FavoriteText()" width="20" height="20" style="display:inline-block; margin-bottom:5px" onclick="favoriteSensor(@Model.SensorId, @((!Model.IsFavorited).ToString().ToLower()), true);" />
+        <img src="@Model.FavoriteIcon()" id="@("imgFavorite" + Model.SensorId)" title="@Model.FavoriteText()" width="20" height="20" style="display:inline-block; margin-bottom:5px" onclick="favoriteSensor(@Model.SensorId);" />
     </h4>
     <h5>@Model.SensorDescription</h5>
 

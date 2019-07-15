@@ -11,7 +11,7 @@ function dateToTicks(date) {
 
 function reloadChart(sensorId) {
     $.ajax({
-        url: 'DataChartComponent?sensor=' + sensorId + '&from=' + dateToTicks($("#chartFrom" + sensorId).val()) + '&to=' + dateToTicks($("#chartTo" + sensorId).val())
+        url: '/Sensors/DataChartComponent?sensor=' + sensorId + '&from=' + dateToTicks($("#chartFrom" + sensorId).val()) + '&to=' + dateToTicks($("#chartTo" + sensorId).val())
     })
         .done(function (data) {
             $('#dataChart' + sensorId).html(data);
@@ -19,19 +19,18 @@ function reloadChart(sensorId) {
         });
 }
 
-function favoriteSensor(sensorId, favorite, doRemove) {
-    if (favorite) {
-        $.ajax({
-            url: 'favorite?sensorId=' + sensorId
-        })
-    } else {
-        $.ajax({
-            url: 'unfavorite?sensorId=' + sensorId
-        })
-            .done(function (data) {
-                if (!favorite) {
-                    $('#sensorDetail' + sensorId).remove()
-                }
-            });
-    }
+function favoriteSensor(sensorId) {
+    var favorite = $('#imgFavorite' + sensorId).attr("src") == "/images/favorite.png";
+    $.ajax({
+        url: '/sensors/favorite?sensorId=' + sensorId + "&favorite=" + favorite
+    }).done(function (data) {
+        if (!favorite) {
+            $('#imgFavorite' + sensorId).attr("src", "/images/favorite.png");
+
+            if (window.location.pathname == '/')
+                $('#sensorDetail' + sensorId).remove()
+        } else {
+            $('#imgFavorite' + sensorId).attr("src", "/images/unfavorite.png");
+        }
+    });
 }

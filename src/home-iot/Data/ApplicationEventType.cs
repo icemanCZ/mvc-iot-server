@@ -20,7 +20,7 @@ namespace HomeIot.Data
                 case ApplicationEventType.NewSensorRegistered:
                     return "Připojil se nový senzor";
                 case ApplicationEventType.SensorConnectionLost:
-                    return "Žádná data od senzoru za více než 10 minut";
+                    return $"Žádná data od senzoru za více než {ApplicationEvent.SENSOR_CONNECTION_LOST_INTERVAL / 60 / 1000} minut";
                 default:
                     throw new NotImplementedException();
             }

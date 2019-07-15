@@ -12,6 +12,9 @@ namespace HomeIot.Data
         {
             context.Database.EnsureCreated();
 
+#if (!DEBUG)
+  return;
+#endif
 
             if (context.Sensors.Any())
                 return;   // DB has been seeded
