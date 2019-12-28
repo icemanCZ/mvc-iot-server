@@ -1,9 +1,17 @@
 ﻿
 @model ChartDataViewModel
 @{
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Data.Select(x => x.Timestamp.ToShortTimeString()).ToList());
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Data.Select(x => $"new Date({x.Timestamp.Year},{x.Timestamp.Month},{x.Timestamp.Day},{x.Timestamp.Hour},{x.Timestamp.Minute},{x.Timestamp.Second},{x.Timestamp.Millisecond})").ToList());
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Data.Select(x => x.Value).ToList());
+
+    //var data = Newtonsoft.Json.JsonConvert.SerializeObject(
+    //    Model.Data.Select(x =>
+    //    new {
+    //        x = $"new Date({x.Timestamp.Year},{x.Timestamp.Month},{x.Timestamp.Day},{x.Timestamp.Hour},{x.Timestamp.Minute},{x.Timestamp.Second},{x.Timestamp.Millisecond})",
+    //        //x = x.Timestamp,
+    //        y = x.Value})).Replace("\"", "");
 }
+
 
 <div id=@("dataChart" + Model.SensorId)>
     <div class="chart-container">
@@ -15,9 +23,10 @@
 
     function drawChart(sensorId) {
         var chartName = "chart" + sensorId;
-            var ctx = document.getElementById(chartName).getContext('2d');
+        var ctx = document.getElementById(chartName).getContext('2d');
+
             var data = {
-                labels: @Html.Raw(XLabels),
+                labels: @Html.Raw(XLabels.Replace("\"", "")),
                 datasets: [{
                     label: "@Html.Raw(Model.SensorName)",
                     backgroundColor: [
@@ -71,10 +80,7 @@
                         }
                     }],
                     xAxes: [{
-                        ticks: {
-                            min: 0,
-                            beginAtZero: true
-                        },
+                        type: 'time',
                         gridLines: {
                             display: false
                         }

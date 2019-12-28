@@ -7,6 +7,7 @@ using HomeIot.ActionFilters;
 using HomeIot.Data;
 using HomeIot.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace home_iot.Controllers
 {
@@ -52,6 +53,43 @@ namespace home_iot.Controllers
             _eventService.NotifySensorConnected(sensorId.Value);
 
             return Ok();
+        }
+
+        public async Task<JsonResult> SensorList()
+        {
+            return new JsonResult(await _context.Sensors
+                .Select(x => new { Id = x.SensorId, Name = x.Name, IsFavorited = x.IsFavorited, Units = x.Units.GetText() })
+                .ToListAsync());
+        }
+
+        public async Task<JsonResult> SensorData(int sensorId, long? from, long? to)
+        {
+            var dateFrom = from != null ? DateTime.FromFileTimeUtc(from.Value) : DateTime.Now.AddDays(-1);
+            var dateTo = to != null ? DateTime.FromFileTimeUtc(to.Value) : DateTime.Now;
+
+
+            return new JsonResult(await _context.SensorData
+                .Where(x => x.SensorId == sensorId && x.Timestamp >= dateFrom && x.Timestamp <= dateTo)
+                .Select(x => new { T = new DateTime(x.Timestamp.Ticks - (x.Timestamp.Ticks % TimeSpan.TicksPerSecond), x.Timestamp.Kind), V = x.Value })
+                .ToListAsync());
+        }
+
+        public async Task<JsonResult> FavoritedSensorsData(long? from, long? to)
+        {
+            var dateFrom = from != null ? DateTime.FromFileTimeUtc(from.Value) : DateTime.Now.AddDays(-1);
+            var dateTo = to != null ? DateTime.FromFileTimeUtc(to.Value) : DateTime.Now;
+
+            return new JsonResult(await _context.Sensors
+                .Where(x => x.IsFavorited)
+                .Select(x => new
+                {
+                    Id = x.SensorId,
+                    Name = x.Name,
+                    Units = x.Units.GetText(),
+                    Data = x.Data.Where(d => d.Timestamp >= dateFrom && d.Timestamp <= dateTo)
+                                 .Select(d => new { T = new DateTime(d.Timestamp.Ticks - (d.Timestamp.Ticks % TimeSpan.TicksPerSecond), d.Timestamp.Kind), V = d.Value })
+                })
+                .ToListAsync());
         }
     }
 }

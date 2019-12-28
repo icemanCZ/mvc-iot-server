@@ -230,7 +230,7 @@ namespace home_iot.Controllers
                     .OrderByDescending(x => x.Timestamp)
                     .Take(3)
                     .AverageAsync(x => x.Value);
-            model.Trend = TrendExtensions.GetTrend(avg, model.ActualValue?.Value ?? 0);
+            model.Trend = TrendExtensions.GetTrend(model.ActualValue?.Value ?? 0, avg);
 
             return View("~/Views/Sensors/Components/SensorDataDetailComponent.cshtml", model);
         }
