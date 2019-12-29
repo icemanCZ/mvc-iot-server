@@ -62,6 +62,13 @@ namespace home_iot.Controllers
                 .ToListAsync());
         }
 
+        public async Task<JsonResult> GroupList()
+        {
+            return new JsonResult(await _context.SensorGroups
+                .Select(x => new { Id = x.SensorGroupId, Name = x.Name })
+                .ToListAsync());
+        }
+
         public async Task<JsonResult> SensorData(int sensorId, long? from, long? to)
         {
             var dateFrom = from != null ? DateTime.FromFileTimeUtc(from.Value) : DateTime.Now.AddDays(-1);
@@ -87,6 +94,24 @@ namespace home_iot.Controllers
                     Name = x.Name,
                     Units = x.Units.GetText(),
                     Data = x.Data.Where(d => d.Timestamp >= dateFrom && d.Timestamp <= dateTo)
+                                 .Select(d => new { T = new DateTime(d.Timestamp.Ticks - (d.Timestamp.Ticks % TimeSpan.TicksPerSecond), d.Timestamp.Kind), V = d.Value })
+                })
+                .ToListAsync());
+        }
+
+        public async Task<JsonResult> GroupSensorsData(int groupId, long? from, long? to)
+        {
+            var dateFrom = from != null ? DateTime.FromFileTimeUtc(from.Value) : DateTime.Now.AddDays(-1);
+            var dateTo = to != null ? DateTime.FromFileTimeUtc(to.Value) : DateTime.Now;
+
+            return new JsonResult(await _context.SensorInSensorGroups
+                .Where(x => x.SensorGroupId == groupId)
+                .Select(x => new
+                {
+                    Id = x.SensorId,
+                    Name = x.Sensor.Name,
+                    Units = x.Sensor.Units.GetText(),
+                    Data = x.Sensor.Data.Where(d => d.Timestamp >= dateFrom && d.Timestamp <= dateTo)
                                  .Select(d => new { T = new DateTime(d.Timestamp.Ticks - (d.Timestamp.Ticks % TimeSpan.TicksPerSecond), d.Timestamp.Kind), V = d.Value })
                 })
                 .ToListAsync());
