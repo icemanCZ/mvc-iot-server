@@ -13,6 +13,7 @@ namespace home_iot.Controllers
 {
     public class ApiController : Controller
     {
+        private const int _okInterval = 12;
         private readonly DBContext _context;
         private readonly IMapper _mapper;
         private readonly IEventService _eventService;
@@ -29,6 +30,10 @@ namespace home_iot.Controllers
         {
             if (string.IsNullOrWhiteSpace(sensorIdentificator))
                 return UnprocessableEntity();
+
+            if (value == 85.5)
+                return Forbid();
+
             var sensorId = _context.Sensors.FirstOrDefault(x => x.Identificator == sensorIdentificator)?.SensorId;
             if (sensorId == null)
             {
@@ -57,15 +62,31 @@ namespace home_iot.Controllers
 
         public async Task<JsonResult> SensorList()
         {
+            var okTime = DateTime.Now.AddMinutes(-_okInterval);
+
             return new JsonResult(await _context.Sensors
-                .Select(x => new { Id = x.SensorId, Name = x.Name, IsFavorited = x.IsFavorited, Units = x.Units.GetText() })
+                .Select(x => new
+                {
+                    Id = x.SensorId,
+                    Name = x.Name,
+                    IsFavorited = x.IsFavorited,
+                    Units = x.Units.GetText(),
+                    IsOk = x.Data.OrderByDescending(d => d.Timestamp).FirstOrDefault().Timestamp > okTime,
+                })
                 .ToListAsync());
         }
 
         public async Task<JsonResult> GroupList()
         {
+            var okTime = DateTime.Now.AddMinutes(-_okInterval);
+
             return new JsonResult(await _context.SensorGroups
-                .Select(x => new { Id = x.SensorGroupId, Name = x.Name })
+                .Select(x => new
+                {
+                    Id = x.SensorGroupId,
+                    Name = x.Name,
+                    IsOk = !x.Sensors.Any(s => s.Sensor.Data.OrderByDescending(d => d.Timestamp).FirstOrDefault().Timestamp < okTime)
+                })
                 .ToListAsync());
         }
 
@@ -74,10 +95,13 @@ namespace home_iot.Controllers
             var dateFrom = from != null ? DateTime.FromFileTimeUtc(from.Value) : DateTime.Now.AddDays(-1);
             var dateTo = to != null ? DateTime.FromFileTimeUtc(to.Value) : DateTime.Now;
 
-
             return new JsonResult(await _context.SensorData
                 .Where(x => x.SensorId == sensorId && x.Timestamp >= dateFrom && x.Timestamp <= dateTo)
-                .Select(x => new { T = new DateTime(x.Timestamp.Ticks - (x.Timestamp.Ticks % TimeSpan.TicksPerSecond), x.Timestamp.Kind), V = x.Value })
+                .Select(x => new
+                {
+                    T = new DateTime(x.Timestamp.Ticks - (x.Timestamp.Ticks % TimeSpan.TicksPerSecond), x.Timestamp.Kind),
+                    V = x.Value
+                })
                 .ToListAsync());
         }
 
@@ -85,6 +109,7 @@ namespace home_iot.Controllers
         {
             var dateFrom = from != null ? DateTime.FromFileTimeUtc(from.Value) : DateTime.Now.AddDays(-1);
             var dateTo = to != null ? DateTime.FromFileTimeUtc(to.Value) : DateTime.Now;
+            var okTime = DateTime.Now.AddMinutes(-_okInterval);
 
             return new JsonResult(await _context.Sensors
                 .Where(x => x.IsFavorited)
@@ -94,7 +119,8 @@ namespace home_iot.Controllers
                     Name = x.Name,
                     Units = x.Units.GetText(),
                     Data = x.Data.Where(d => d.Timestamp >= dateFrom && d.Timestamp <= dateTo)
-                                 .Select(d => new { T = new DateTime(d.Timestamp.Ticks - (d.Timestamp.Ticks % TimeSpan.TicksPerSecond), d.Timestamp.Kind), V = d.Value })
+                                 .Select(d => new { T = new DateTime(d.Timestamp.Ticks - (d.Timestamp.Ticks % TimeSpan.TicksPerSecond), d.Timestamp.Kind), V = d.Value }),
+                    IsOk = x.Data.OrderByDescending(d => d.Timestamp).FirstOrDefault().Timestamp > okTime,
                 })
                 .ToListAsync());
         }
@@ -103,6 +129,7 @@ namespace home_iot.Controllers
         {
             var dateFrom = from != null ? DateTime.FromFileTimeUtc(from.Value) : DateTime.Now.AddDays(-1);
             var dateTo = to != null ? DateTime.FromFileTimeUtc(to.Value) : DateTime.Now;
+            var okTime = DateTime.Now.AddMinutes(-_okInterval);
 
             return new JsonResult(await _context.SensorInSensorGroups
                 .Where(x => x.SensorGroupId == groupId)
@@ -112,7 +139,8 @@ namespace home_iot.Controllers
                     Name = x.Sensor.Name,
                     Units = x.Sensor.Units.GetText(),
                     Data = x.Sensor.Data.Where(d => d.Timestamp >= dateFrom && d.Timestamp <= dateTo)
-                                 .Select(d => new { T = new DateTime(d.Timestamp.Ticks - (d.Timestamp.Ticks % TimeSpan.TicksPerSecond), d.Timestamp.Kind), V = d.Value })
+                                 .Select(d => new { T = new DateTime(d.Timestamp.Ticks - (d.Timestamp.Ticks % TimeSpan.TicksPerSecond), d.Timestamp.Kind), V = d.Value }),
+                    IsOk = x.Sensor.Data.OrderByDescending(d => d.Timestamp).FirstOrDefault().Timestamp > okTime,
                 })
                 .ToListAsync());
         }
