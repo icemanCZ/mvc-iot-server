@@ -78,7 +78,7 @@ namespace home_iot.Controllers
         }
 
         // POST: Sensors/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -132,8 +132,8 @@ namespace home_iot.Controllers
         }
     }
 
-
     #region Components
+
     public class FavoritedSensorsViewComponent : ViewComponent
     {
         private const int MAX_SAMPLES_COUNT = 200;
@@ -173,7 +173,6 @@ namespace home_iot.Controllers
                     .OrderBy(x => x.Timestamp)
                     .Select(x => new SensorDataViewModel(sensor, x.Timestamp, x.Value))
                     .ToListAsync()
-
             };
 
             // TODO: tohle nejak udelat uz pri nacitani z DB. Nebo jeste lepe udelat nejakou intepolaci
@@ -183,7 +182,6 @@ namespace home_iot.Controllers
             return View("~/Views/Sensors/Components/DataChartComponent.cshtml", model);
         }
     }
-
 
     public class SensorDataDetailViewComponent : ViewComponent
     {
@@ -221,7 +219,7 @@ namespace home_iot.Controllers
                 .FirstOrDefaultAsync();
             model.LastConnection = await _context.SensorData
                 .Where(x => x.SensorId == sensor)
-                .MaxAsync(x => x.Timestamp);
+                .MaxAsync(x => (DateTime?)x.Timestamp) ?? DateTime.MinValue;
             model.ChartFrom = now.AddHours(-6);
             model.ChartTo = now;
 
@@ -229,7 +227,7 @@ namespace home_iot.Controllers
                     .Where(x => x.SensorId == sensor)
                     .OrderByDescending(x => x.Timestamp)
                     .Take(3)
-                    .AverageAsync(x => x.Value);
+                    .AverageAsync(x => (float?)x.Value) ?? 0;
             model.Trend = TrendExtensions.GetTrend(model.ActualValue?.Value ?? 0, avg);
 
             return View("~/Views/Sensors/Components/SensorDataDetailComponent.cshtml", model);
@@ -264,7 +262,7 @@ namespace home_iot.Controllers
             for (int i = 0; i < dbData.Count(); i++)
             {
                 models[i].ActualValue = _mapper.Map<SensorDataViewModel>(dbData[i].ActualValue);
-                models[i].Trend = TrendExtensions.GetTrend(models[i].ActualValue.Value, dbData[i].Last3.Average(x => x.Value));
+                models[i].Trend = TrendExtensions.GetTrend(models[i].ActualValue?.Value ?? 0, dbData[i].Last3.Average(x => (float?)x.Value) ?? 0);
             }
 
             return View("~/Views/Sensors/Components/SensorsOverviewComponent.cshtml", models);
